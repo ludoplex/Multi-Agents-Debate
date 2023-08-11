@@ -102,7 +102,7 @@ class Debate:
             'players': {},
         }
         prompts = json.load(open(prompts_path))
-        self.save_file.update(prompts)
+        self.save_file |= prompts
         self.init_prompt()
 
         if self.save_file['base_translation'] == "":
@@ -214,20 +214,19 @@ class Debate:
 
             if self.mod_ans["debate_translation"] != '':
                 break
-            else:
-                print(f"===== Debate Round-{round+2} =====\n")
-                self.affirmative.add_event(self.save_file['debate_prompt'].replace('##oppo_ans##', self.neg_ans))
-                self.aff_ans = self.affirmative.ask()
-                self.affirmative.add_memory(self.aff_ans)
+            print(f"===== Debate Round-{round+2} =====\n")
+            self.affirmative.add_event(self.save_file['debate_prompt'].replace('##oppo_ans##', self.neg_ans))
+            self.aff_ans = self.affirmative.ask()
+            self.affirmative.add_memory(self.aff_ans)
 
-                self.negative.add_event(self.save_file['debate_prompt'].replace('##oppo_ans##', self.aff_ans))
-                self.neg_ans = self.negative.ask()
-                self.negative.add_memory(self.neg_ans)
+            self.negative.add_event(self.save_file['debate_prompt'].replace('##oppo_ans##', self.aff_ans))
+            self.neg_ans = self.negative.ask()
+            self.negative.add_memory(self.neg_ans)
 
-                self.moderator.add_event(self.save_file['moderator_prompt'].replace('##aff_ans##', self.aff_ans).replace('##neg_ans##', self.neg_ans).replace('##round##', self.round_dct(round+2)))
-                self.mod_ans = self.moderator.ask()
-                self.moderator.add_memory(self.mod_ans)
-                self.mod_ans = eval(self.mod_ans)
+            self.moderator.add_event(self.save_file['moderator_prompt'].replace('##aff_ans##', self.aff_ans).replace('##neg_ans##', self.neg_ans).replace('##round##', self.round_dct(round+2)))
+            self.mod_ans = self.moderator.ask()
+            self.moderator.add_memory(self.mod_ans)
+            self.mod_ans = eval(self.mod_ans)
 
         if self.mod_ans["debate_translation"] != '':
             self.save_file.update(self.mod_ans)
@@ -250,7 +249,7 @@ class Debate:
             judge_player.add_event(self.save_file['judge_prompt_last2'])
             ans = judge_player.ask()
             judge_player.add_memory(ans)
-            
+
             ans = eval(ans)
             if ans["debate_translation"] != '':
                 self.save_file['success'] = True

@@ -176,20 +176,19 @@ class Debate:
 
             if self.mod_ans["debate_answer"] != '':
                 break
-            else:
-                print(f"===== Debate Round-{round+2} =====\n")
-                self.affirmative.add_event(self.config['debate_prompt'].replace('##oppo_ans##', self.neg_ans))
-                self.aff_ans = self.affirmative.ask()
-                self.affirmative.add_memory(self.aff_ans)
+            print(f"===== Debate Round-{round+2} =====\n")
+            self.affirmative.add_event(self.config['debate_prompt'].replace('##oppo_ans##', self.neg_ans))
+            self.aff_ans = self.affirmative.ask()
+            self.affirmative.add_memory(self.aff_ans)
 
-                self.negative.add_event(self.config['debate_prompt'].replace('##oppo_ans##', self.aff_ans))
-                self.neg_ans = self.negative.ask()
-                self.negative.add_memory(self.neg_ans)
+            self.negative.add_event(self.config['debate_prompt'].replace('##oppo_ans##', self.aff_ans))
+            self.neg_ans = self.negative.ask()
+            self.negative.add_memory(self.neg_ans)
 
-                self.moderator.add_event(self.config['moderator_prompt'].replace('##aff_ans##', self.aff_ans).replace('##neg_ans##', self.neg_ans).replace('##round##', self.round_dct(round+2)))
-                self.mod_ans = self.moderator.ask()
-                self.moderator.add_memory(self.mod_ans)
-                self.mod_ans = eval(self.mod_ans)
+            self.moderator.add_event(self.config['moderator_prompt'].replace('##aff_ans##', self.aff_ans).replace('##neg_ans##', self.neg_ans).replace('##round##', self.round_dct(round+2)))
+            self.mod_ans = self.moderator.ask()
+            self.moderator.add_memory(self.mod_ans)
+            self.mod_ans = eval(self.mod_ans)
 
         if self.mod_ans["debate_answer"] != '':
             self.config.update(self.mod_ans)
@@ -212,7 +211,7 @@ class Debate:
             judge_player.add_event(self.config['judge_prompt_last2'])
             ans = judge_player.ask()
             judge_player.add_memory(ans)
-            
+
             ans = eval(ans)
             if ans["debate_answer"] != '':
                 self.config['success'] = True
@@ -230,9 +229,9 @@ if __name__ == "__main__":
 
     while True:
         debate_topic = ""
-        while debate_topic == "":
+        while not debate_topic:
             debate_topic = input(f"\nEnter your debate topic: ")
-            
+
         config = json.load(open(f"{MAD_path}/code/utils/config4all.json", "r"))
         config['debate_topic'] = debate_topic
 
